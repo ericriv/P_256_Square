@@ -120,34 +120,42 @@ output	[255:0]		reduce_out
 					accum[14] <= {32'b0, a_high[223:192]};
 					accum[15] <= {32'b0, a_high[255:224]};
 					
+					i <= 0;
+					
 					state <= FOLD;
 				end
 				
 				FOLD: begin
-					add_x_1 <= accum[fold_count];			//A[i] += A[8+i]
-					add_y_1 <= accum[fold_count + 4'd8];
+					add_x_1 <= accum[i];			//A[i] += A[8+i]
+					add_y_1 <= accum[i + 4'd8];
 						
-					add_x_2 <= accum[fold_count + 4'd7];	//A[i+7] += A[8+i]
-					add_y_2 <= accum[fold_count + 4'd8];
+					add_x_2 <= accum[i + 4'd7];	//A[i+7] += A[8+i]
+					add_y_2 <= accum[i + 4'd8];
 						
-					sub_x_1 <= accum[fold_count + 4'd6];	//A[i+6] -= A[8+i]
-					sub_y_1 <= accum[fold_count + 4'd8];
+					sub_x_1 <= accum[i + 4'd6];	//A[i+6] -= A[8+i]
+					sub_y_1 <= accum[i + 4'd8];
 						
-					sub_x_2 <= accum[fold_count + 4'd3];	//A[i+3] -= A[8+i]
-					sub_y_2 <= accum[fold_count + 4'd8];
+					sub_x_2 <= accum[i + 4'd3];	//A[i+3] -= A[8+i]
+					sub_y_2 <= accum[i + 4'd8];
 						
 					state <= FOLD_WAIT;
 				end
 				
 				FOLD_WAIT: begin
-					accum[fold_count] <= add_sum_1;			//A[i] += A[8+i]
-					accum[fold_count + 4'd7] <= add_sum_2;	//A[i+7] += A[8+i]
-					accum[fold_count + 4'd6] <= sub_diff_1;	//A[i+6] -= A[8+i]
-					accum[fold_count + 4'd3] <= sub_diff_2;	//A[i+3] -= A[8+i]
-					accum[fold_count + 4'd8] <= 64'b0;		//A[i+8] = 0
+					accum[i] <= add_sum_1;			//A[i] += A[8+i]
+					accum[i + 4'd7] <= add_sum_2;	//A[i+7] += A[8+i]
+					accum[i + 4'd6] <= sub_diff_1;	//A[i+6] -= A[8+i]
+					accum[i + 4'd3] <= sub_diff_2;	//A[i+3] -= A[8+i]
+					accum[i + 4'd8] <= 64'b0;		//A[i+8] = 0
 					
-					fold_count <= fold_count + 4'b1;
-					state <= CARRY_PROP;
+					if(i != 5'd7) begin
+						i <= i + 5'b1;
+						state <= FOLD;
+					end
+					else begin
+						i <= 5'b0;
+						state <= CARRY_PROP;
+					end
 				end
 				
 				CARRY_PROP: begin
@@ -158,10 +166,10 @@ output	[255:0]		reduce_out
 				
 				CARRY_PROP_WAIT: begin
 					accum[carry_count] <= {32'b0, add_sum_1[31:0]};
-					carry <= {32'b0, add_sum_1[63:32]};
+					carry <= {{32{add_sum_1[63]}}, add_sum_1[63:32]}; //sign extend the carry
 					if(carry_count == 4'd15) begin
 						carry_count <= 4'b0;
-						if(fold_count == 4'd15) begin
+						if(fold_count == 4'd8) begin
 							fold_count <= 4'b0;
 							state <= FINISH;
 						end

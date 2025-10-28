@@ -6,7 +6,7 @@ input			rst_n,
 input			ena,
 input	[31:0]	a_din,
 output			rdy,
-output			a_addr,
+output	[2:0]	a_addr,
 output	[2:0]	d_addr,
 output			d_wren,
 output	[31:0]	d_dout

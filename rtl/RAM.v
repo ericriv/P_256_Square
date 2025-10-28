@@ -17,14 +17,14 @@ reg	[31:0]	data_out_reg;
 
 initial begin
 	if(CHOOSE == 1) begin
-		MEMORY[0] = 32'h37bf51f5;
-		MEMORY[1] = 32'hcbb64068;
-		MEMORY[2] = 32'h6b315ece;
-		MEMORY[3] = 32'h2bce3357;
-		MEMORY[4] = 32'h7c0f9e16;
-		MEMORY[5] = 32'h8ee7eb4a;
-		MEMORY[6] = 32'hfe1a7f9b;
-		MEMORY[7] = 32'h4fe342e2;
+		MEMORY[0] = 32'hd898c296;
+		MEMORY[1] = 32'hf4a13945;
+		MEMORY[2] = 32'h2deb33a0;
+		MEMORY[3] = 32'h77037d81;
+		MEMORY[4] = 32'h63a440f2;
+		MEMORY[5] = 32'hf8bce6e5;
+		MEMORY[6] = 32'he12c4247;
+		MEMORY[7] = 32'h6b17d1f2;
 	end
 	//0x47a2dcf8_7221ed74_a10df3da_be87133f_f4091278_764d0426_e024c340_6a3ca057
 	else if(CHOOSE == 2) begin
